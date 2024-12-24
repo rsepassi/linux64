@@ -16,7 +16,7 @@ case "${ARCH}" in
     ;;
   riscv64)
     ARCH=riscv
-    kpath=arch/riscv/boot/Image.gz
+    kpath=arch/riscv/boot/Image
     ;;
   *)
     echo "unrecognized kernel arch ${ARCH}"
@@ -27,6 +27,7 @@ esac
 rm -rf \
   $OUTDIR/kernel \
   $OUTDIR/kernel.config \
+  $OUTDIR/linux-headers \
   $BUILDDIR/linux-${KVERSION}
 
 mkdir -p \
@@ -100,7 +101,10 @@ fi
 gpg2 --homedir=$BUILDDIR/gnupg_kernel --verify linux-${KVERSION}.tar.sign
 
 # Extract the kernel sources
+if [ ! -d "linux-${KVERSION}" ]
+then
 tar xf linux-${KVERSION}.tar
+fi
 cd linux-${KVERSION}
 
 # Build
@@ -123,8 +127,10 @@ kmake() {
 		$@
 }
 
+kmake clean
 kmake defconfig
 kmake -j
+kmake -j headers_install INSTALL_HDR_PATH=$OUTDIR/linux-headers
 
 cp $BUILDDIR/linux-${KVERSION}/.config $OUTDIR/kernel.config
 mv $BUILDDIR/linux-${KVERSION}/$kpath $OUTDIR/kernel

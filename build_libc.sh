@@ -5,7 +5,7 @@ set -ex
 : ${ARCH:="x86_64"}
 : ${CVERSION:="1.2.5"}
 : ${BUILDDIR:=$PWD/build}
-: ${OUTDIR:=$BUILDDIR/linux64/${ARCH}/libc}
+: ${OUTDIR:=$BUILDDIR/linux64/${ARCH}/libc/usr}
 
 case $ARCH in
   arm64)
