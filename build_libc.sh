@@ -71,3 +71,33 @@ cd musl-${CVERSION}
   CFLAGS="--target=${ARCH}-linux-musl"
 make -j
 make install
+
+# add a dummy libssp_nonshared.a
+mkdir -p obj/ssp
+cd obj/ssp
+cat <<EOF > __stack_chk_fail_local.c
+extern void __stack_chk_fail(void);
+
+void __attribute__((visibility ("hidden")))
+__stack_chk_fail_local(void) { __stack_chk_fail(); }
+EOF
+
+cflags="
+--target=${ARCH}-linux-musl
+-O2
+-std=c99
+-fPIC
+-fdata-sections
+-ffreestanding
+-ffunction-sections
+-fno-align-functions
+-fno-asynchronous-unwind-tables
+-fno-strict-aliasing
+-fno-unwind-tables
+-fomit-frame-pointer
+-Wa,--noexecstack
+"
+
+clang $cflags -c -o __stack_chk_fail_local.o __stack_chk_fail_local.c
+llvm-ar rcs libssp_nonshared.a
+mv libssp_nonshared.a $OUTDIR/lib/
