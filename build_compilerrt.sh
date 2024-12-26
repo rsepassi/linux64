@@ -61,6 +61,7 @@ tar xf llvm-project-${LLVM_VERSION}.src.tar.xz
 fi
 cd llvm-project-${LLVM_VERSION}.src
 
+# Build compiler-rt
 rm -rf build-crt
 mkdir -p build-crt
 cd build-crt
@@ -90,6 +91,7 @@ cmake ../runtimes \
 make -j
 cd ..
 
+# Install in the output dir
 rtdir=$OUTDIR/lib/${CARCH}-unknown-linux-musl
 mkdir -p $rtdir
 mv build-crt/compiler-rt/lib/linux/clang_rt.crtbegin-${CARCH}.o $rtdir/clang_rt.crtbegin.o

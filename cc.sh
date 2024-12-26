@@ -5,7 +5,7 @@ set -ex
 : ${ARCH:="x86_64"}
 : ${BUILDDIR:="$PWD/build"}
 : ${L64DIR:="$BUILDDIR/linux64/$ARCH"}
-: ${OUTDIR:="$BUILDDIR/hello"}
+: ${OUTDIR:="$BUILDDIR/hello/$ARCH"}
 
 CARCH=$ARCH
 case $ARCH in
@@ -31,7 +31,6 @@ ccld() {
   clang \
     --target=$CARCH-linux-musl \
     --sysroot=$L64DIR/libc \
-    -isystem $L64DIR/linux-headers \
     -static \
     -fuse-ld=lld \
     --rtlib=compiler-rt \
